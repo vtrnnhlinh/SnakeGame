@@ -304,27 +304,31 @@ static void restart_game(void) {
 	draw_cell(food.i, food.j, FOOD_COLOR);
 	draw_score();
 }
-
-/* Button wrappers:
-   Replace button_* calls below with your button API.
-   Common names: button_is_pressed(BTN_UP), button_read(BTN_UP), etc.
-   If you have simple digital inputs: return (HAL_GPIO_ReadPin(PIN_UP) == GPIO_PIN_RESET) ? 1 : 0;
-*/
 uint8_t is_button_up(void) {
-	/* Replace with your button driver call */
-	/* Example: return button_is_pressed(BUTTON_UP); */
-	return button_read(BUTTON_UP); /* modify if your button API differs */
+	if (button_count[1] > 0) {
+		return 1;
+	}
+	return 0;
 }
 
 uint8_t is_button_down(void) {
-	return button_read(BUTTON_DOWN); /* modify if your button API differs */
+	if (button_count[9] > 0) {
+		return 1;
+	}
+	return 0;
 }
 
 uint8_t is_button_left(void) {
-	return button_read(BUTTON_LEFT); /* modify if your button API differs */
+	if (button_count[4] > 0) {
+		return 1;
+	}
+	return 0;
 }
 
 uint8_t is_button_right(void) {
-	return button_read(BUTTON_RIGHT); /* modify if your button API differs */
+	if (button_count[6] > 0) {
+		return 1;
+	}
+	return 0;
 }
 
