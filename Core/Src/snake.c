@@ -81,7 +81,6 @@ void game_init(void) {
 }
 
 void game_process(void) {
-  draw_frame();
   static uint8_t counter_game = 0;
   counter_game = (counter_game + 1) % 5; /* slow down ticks */
 
@@ -188,6 +187,8 @@ static void draw_cell(uint8_t i, uint8_t j, uint16_t color) {
   /* We assume a function lcd_fill_rectangle(x, y, x2, y2, color) exists.
      If your API name differs, change it here. */
   lcd_fill(y, x, y + MAZE_CELL_WIDTH - 1, x + MAZE_CELL_WIDTH - 1, color);
+  lcd_draw_rectangle(MAZE_TOP_BORDER, MAZE_LEFT_BORDER, MAZE_BOTTOM_BORDER,
+                     MAZE_RIGHT_BORDER, GRID_COLOR);
   /* optional border */
   // lcd_draw_rectangle(cell_pixel_y(i), cell_pixel_x(j),
   //                    cell_pixel_y(i) + MAZE_CELL_WIDTH - 1,
