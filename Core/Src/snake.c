@@ -157,17 +157,9 @@ void game_process(void) {
 /* Private helper implementations -------------------------------------------*/
 
 static void draw_frame(void) {
-  /* draw outer rectangle frame (same as pacman template) */
   lcd_draw_rectangle(MAZE_TOP_BORDER, MAZE_LEFT_BORDER, MAZE_BOTTOM_BORDER,
                      MAZE_RIGHT_BORDER, GRID_COLOR);
 
-  /* optionally draw grid lines */
-  for (uint8_t r = 0; r < MAZE_ROW_N; ++r) {
-    for (uint8_t c = 0; c < MAZE_COLUMN_N; ++c) {
-      /* draw empty cell background */
-      clear_cell(r, c);
-    }
-  }
 }
 
 static inline int cell_pixel_x(uint8_t j) {
