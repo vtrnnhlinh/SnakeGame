@@ -63,11 +63,11 @@ void game_init(void) {
 
   /* Initialize snake mid-board, horizontal to the right */
   snake_length = 1;
+  uint8_t mid_i = MAZE_ROW_N / 2;
+  uint8_t mid_j = MAZE_COLUMN_N / 2 - 1;
   snake[0].i = mid_i;
   snake[0].j = mid_j;
 
-  uint8_t mid_i = MAZE_ROW_N / 2;
-  uint8_t mid_j = MAZE_COLUMN_N / 2 - 1;
 
 
   snake_dir = RIGHT;
