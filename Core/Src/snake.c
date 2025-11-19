@@ -220,5 +220,5 @@ uint8_t is_button_up(void) { return button_count[1] > 0; }
 uint8_t is_button_down(void) { return button_count[9] > 0; }
 uint8_t is_button_left(void) { return button_count[4] > 0; }
 uint8_t is_button_right(void) { return button_count[6] > 0; }
-uint8_t is_button_select(void) { return button_count[0] > 0; }  // choose a free button
+uint8_t is_button_select(void) { return button_count[1] > 0; }  // choose a free button
 
