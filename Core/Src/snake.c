@@ -66,6 +66,10 @@ void game_init(void) {
   snake[0].i = mid_i;
   snake[0].j = mid_j;
 
+  uint8_t mid_i = MAZE_ROW_N / 2;
+  uint8_t mid_j = MAZE_COLUMN_N / 2 - 1;
+
+
   snake_dir = RIGHT;
 
   /* Draw initial snake */
