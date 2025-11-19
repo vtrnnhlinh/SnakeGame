@@ -68,8 +68,6 @@ void game_init(void) {
   snake[0].i = mid_i;
   snake[0].j = mid_j;
 
-
-
   snake_dir = RIGHT;
 
   /* Draw initial snake */
@@ -82,64 +80,79 @@ void game_init(void) {
   draw_cell(food.i, food.j, FOOD_COLOR);
 }
 
-if (counter_game == 0) {
+void game_process(void) {
+  static uint8_t counter_game = 0;
+  counter_game = (counter_game + 1) % 5; /* slow down ticks */
+
+  /* read direction first (non-blocking) */
+  if (is_button_up() && snake_dir != DOWN) {
+    snake_dir = UP;
+  } else if (is_button_down() && snake_dir != UP) {
+    snake_dir = DOWN;
+  } else if (is_button_left() && snake_dir != RIGHT) {
+    snake_dir = LEFT;
+  } else if (is_button_right() && snake_dir != LEFT) {
+    snake_dir = RIGHT;
+  }
+  if (counter_game == 0) {
     /* compute new head position */
     S_CELL_POS new_head = snake[snake_length - 1]; /* current head */
 
     switch (snake_dir) {
     case UP:
-        new_head.i = (new_head.i == 0) ? (MAZE_ROW_N - 1) : (new_head.i - 1);
-        break;
+      new_head.i = (new_head.i == 0) ? (MAZE_ROW_N - 1) : (new_head.i - 1);
+      break;
     case DOWN:
-        new_head.i = (new_head.i + 1) % MAZE_ROW_N;
-        break;
+      new_head.i = (new_head.i + 1) % MAZE_ROW_N;
+      break;
     case LEFT:
-        new_head.j = (new_head.j == 0) ? (MAZE_COLUMN_N - 1) : (new_head.j - 1);
-        break;
+      new_head.j = (new_head.j == 0) ? (MAZE_COLUMN_N - 1) : (new_head.j - 1);
+      break;
     case RIGHT:
-        new_head.j = (new_head.j + 1) % MAZE_COLUMN_N;
-        break;
+      new_head.j = (new_head.j + 1) % MAZE_COLUMN_N;
+      break;
     case STOP:
-        return; /* do nothing */
+      return; /* do nothing */
     default:
-        return;
+      return;
     }
 
     /* check self collision */
     if (snake_cell_at(new_head.i, new_head.j)) {
-        restart_game();
-        return;
+      restart_game();
+      return;
     }
 
     uint8_t ate_food = cell_equal(&new_head, &food);
 
     /* if not eating, remove tail visually and shift positions */
     if (!ate_food) {
-        clear_cell(snake[0].i, snake[0].j);
-        for (uint16_t k = 0; k < snake_length - 1; ++k) {
-            snake[k] = snake[k + 1];
-        }
-        snake[snake_length - 1] = new_head;
+      clear_cell(snake[0].i, snake[0].j);
+      for (uint16_t k = 0; k < snake_length - 1; ++k) {
+        snake[k] = snake[k + 1];
+      }
+      snake[snake_length - 1] = new_head;
     } else {
-        if (snake_length < MAX_CELLS) {
-            snake[snake_length] = new_head;
-            ++snake_length;
-            score += 10;
-            draw_score();
-        } else {
-            lcd_show_string(20, 250, "You win!", TEXT_COLOR, BACKGROUND_COLOR, 16, 0);
-            restart_game();
-            return;
-        }
-        if (snake_length < MAX_CELLS) {
-            place_food();
-        }
+      if (snake_length < MAX_CELLS) {
+        snake[snake_length] = new_head;
+        ++snake_length;
+        score += 10;
+        draw_score();
+      } else {
+        lcd_show_string(20, 250, "You win!", TEXT_COLOR, BACKGROUND_COLOR, 16,
+                        0);
+        restart_game();
+        return;
+      }
+      if (snake_length < MAX_CELLS) {
+        place_food();
+      }
     }
 
     draw_cell(new_head.i, new_head.j, SNAKE_COLOR);
     draw_cell(food.i, food.j, FOOD_COLOR);
+  }
 }
-
 
 /* Private helper implementations -------------------------------------------*/
 
@@ -173,12 +186,11 @@ static void draw_cell(uint8_t i, uint8_t j, uint16_t color) {
   /* Fill the cell area. Adjust to your lcd API if different. */
   /* We assume a function lcd_fill_rectangle(x, y, x2, y2, color) exists.
      If your API name differs, change it here. */
-  lcd_fill(y, x, y + MAZE_CELL_WIDTH - 1, x + MAZE_CELL_WIDTH - 1,
-                     color);
+  lcd_fill(y, x, y + MAZE_CELL_WIDTH - 1, x + MAZE_CELL_WIDTH - 1, color);
   /* optional border */
-  lcd_draw_rectangle(cell_pixel_y(i), cell_pixel_x(j),
-                     cell_pixel_y(i) + MAZE_CELL_WIDTH - 1,
-                     cell_pixel_x(j) + MAZE_CELL_WIDTH - 1, GRID_COLOR);
+  // lcd_draw_rectangle(cell_pixel_y(i), cell_pixel_x(j),
+  //                    cell_pixel_y(i) + MAZE_CELL_WIDTH - 1,
+  //                    cell_pixel_x(j) + MAZE_CELL_WIDTH - 1, GRID_COLOR);
 }
 
 static void clear_cell(uint8_t i, uint8_t j) {
