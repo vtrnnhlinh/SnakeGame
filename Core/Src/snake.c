@@ -218,7 +218,7 @@ static void draw_cell(uint8_t i, uint8_t j, uint16_t color) {
 	/* Fill the cell area. Adjust to your lcd API if different. */
 	/* We assume a function lcd_fill_rectangle(x, y, x2, y2, color) exists.
 	   If your API name differs, change it here. */
-	lcd_fill_rectangle(y, x, y + MAZE_CELL_WIDTH - 1, x + MAZE_CELL_WIDTH - 1, color);
+	lcd_draw_rectangle(y, x, y + MAZE_CELL_WIDTH - 1, x + MAZE_CELL_WIDTH - 1, color);
 	/* optional border */
 	lcd_draw_rectangle(cell_pixel_y(i), cell_pixel_x(j), cell_pixel_y(i) + MAZE_CELL_WIDTH - 1,
 	                   cell_pixel_x(j) + MAZE_CELL_WIDTH - 1, GRID_COLOR);
@@ -272,7 +272,7 @@ static void draw_score(void) {
 	char buf[32];
 	snprintf(buf, sizeof(buf), "Score: %d  Len:%d", score, (int)snake_length);
 	/* clear previous display area -> redraw */
-	lcd_fill_rectangle(230, 20, 270, 200, BACKGROUND_COLOR); /* adapt coords if needed */
+	lcd_draw_rectangle(230, 20, 270, 200, BACKGROUND_COLOR); /* adapt coords if needed */
 	lcd_show_string(20, 250, buf, TEXT_COLOR, BACKGROUND_COLOR, 16, 0);
 }
 
