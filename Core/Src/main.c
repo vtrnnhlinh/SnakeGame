@@ -34,7 +34,7 @@
 #include "lcd.h"
 #include "picture.h"
 
-#include "pacman.h"
+#include "snake.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
