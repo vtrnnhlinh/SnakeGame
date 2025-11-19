@@ -82,109 +82,64 @@ void game_init(void) {
   draw_cell(food.i, food.j, FOOD_COLOR);
 }
 
-void game_process(void) {
-  static uint8_t counter_game = 0;
-  counter_game = (counter_game + 1) % 5; /* slow down ticks */
-
-  /* read direction first (non-blocking) */
-  if (is_button_up() && snake_dir != DOWN) {
-    snake_dir = UP;
-  } else if (is_button_down() && snake_dir != UP) {
-    snake_dir = DOWN;
-  } else if (is_button_left() && snake_dir != RIGHT) {
-    snake_dir = LEFT;
-  } else if (is_button_right() && snake_dir != LEFT) {
-    snake_dir = RIGHT;
-  }
-
-  if (counter_game == 0) {
+if (counter_game == 0) {
     /* compute new head position */
     S_CELL_POS new_head = snake[snake_length - 1]; /* current head */
 
     switch (snake_dir) {
     case UP:
-      if (new_head.i == 0) { /* hits top wall */
-        restart_game();
-        return;
-      }
-      new_head.i -= 1;
-      break;
+        new_head.i = (new_head.i == 0) ? (MAZE_ROW_N - 1) : (new_head.i - 1);
+        break;
     case DOWN:
-      if (new_head.i >= MAZE_ROW_N - 1) {
-        restart_game();
-        return;
-      }
-      new_head.i += 1;
-      break;
+        new_head.i = (new_head.i + 1) % MAZE_ROW_N;
+        break;
     case LEFT:
-      if (new_head.j == 0) {
-        restart_game();
-        return;
-      }
-      new_head.j -= 1;
-      break;
+        new_head.j = (new_head.j == 0) ? (MAZE_COLUMN_N - 1) : (new_head.j - 1);
+        break;
     case RIGHT:
-      if (new_head.j >= MAZE_COLUMN_N - 1) {
-        restart_game();
-        return;
-      }
-      new_head.j += 1;
-      break;
+        new_head.j = (new_head.j + 1) % MAZE_COLUMN_N;
+        break;
     case STOP:
-      /* do nothing */
-      return;
+        return; /* do nothing */
     default:
-      return;
+        return;
     }
 
     /* check self collision */
     if (snake_cell_at(new_head.i, new_head.j)) {
-      restart_game();
-      return;
+        restart_game();
+        return;
     }
 
     uint8_t ate_food = cell_equal(&new_head, &food);
 
     /* if not eating, remove tail visually and shift positions */
     if (!ate_food) {
-      /* clear tail from screen */
-      clear_cell(snake[0].i, snake[0].j);
-
-      /* shift left: drop tail */
-      for (uint16_t k = 0; k < snake_length - 1; ++k) {
-        snake[k] = snake[k + 1];
-      }
-      /* append new head */
-      snake[snake_length - 1] = new_head;
+        clear_cell(snake[0].i, snake[0].j);
+        for (uint16_t k = 0; k < snake_length - 1; ++k) {
+            snake[k] = snake[k + 1];
+        }
+        snake[snake_length - 1] = new_head;
     } else {
-      /* grow: append new head without removing tail */
-      if (snake_length < MAX_CELLS) {
-        snake[snake_length] = new_head;
-        ++snake_length;
-        score += 10;
-        draw_score();
-      } else {
-        /* filled entire board -> win */
-        lcd_show_string(20, 250, "You win!", TEXT_COLOR, BACKGROUND_COLOR, 16,
-                        0);
-        /* restart after short delay (or immediate) */
-        restart_game();
-        return;
-      }
-
-      /* place new food (if board not full) */
-      if (snake_length < MAX_CELLS) {
-        place_food();
-      }
+        if (snake_length < MAX_CELLS) {
+            snake[snake_length] = new_head;
+            ++snake_length;
+            score += 10;
+            draw_score();
+        } else {
+            lcd_show_string(20, 250, "You win!", TEXT_COLOR, BACKGROUND_COLOR, 16, 0);
+            restart_game();
+            return;
+        }
+        if (snake_length < MAX_CELLS) {
+            place_food();
+        }
     }
 
-    /* draw new head */
     draw_cell(new_head.i, new_head.j, SNAKE_COLOR);
-
-    /* draw food (in case it was overwritten) */
     draw_cell(food.i, food.j, FOOD_COLOR);
-  }
 }
+
 
 /* Private helper implementations -------------------------------------------*/
 
